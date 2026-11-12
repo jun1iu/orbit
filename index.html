@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sol Arden — Design Engineer</title>
+<meta name="description" content="Sol Arden is a design engineer from Phoenix, based in Hong Kong: interactive maps and data stories for the web, built in TypeScript and WebGL with care for motion, accessibility and detail.">
+<meta name="theme-color" content="#05070d">
+<link rel="canonical" href="https://orbit.jun-liu.net/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://orbit.jun-liu.net/">
+<meta property="og:image" content="https://orbit.jun-liu.net/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:title" content="Sol Arden — Design Engineer">
+<meta property="og:description" content="Design engineer from Phoenix, based in Hong Kong: maps and data stories for the web, built with care.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305070d'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%236a3cff' fill-opacity='.55' stroke='%23ff2e93' stroke-width='3'/%3E%3Cellipse cx='32' cy='32' rx='25' ry='9' fill='none' stroke='%23fff' stroke-width='2' transform='rotate(-24 32 32)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script>
+  // Mark JS as running. If the site script never finishes (blocked, offline, old browser),
+  // fall back to showing the content after a few seconds instead of an endless loader.
+  document.documentElement.classList.add('js');
+  // The intro plays once per visit: later pages in the same session skip straight to the content.
+  try { if (sessionStorage.getItem('orbit:intro')) document.documentElement.classList.add('seen'); } catch (e) {}
+  setTimeout(function () { var d = document.documentElement; if (!d.classList.contains('ready')) d.classList.add('fallback'); }, 8000);
+</script>
+<script type="importmap">{ "imports": { "three": "/vendor/three.module.min.js" } }</script>
+</head>
+<body class="dark">
+
+<div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading">
+  <div class="loader__half loader__half--top"></div>
+  <div class="loader__half loader__half--bottom"></div>
+  <p class="loader__corner loader__corner--tl">Sol.A</p>
+  <p class="loader__corner loader__corner--br" id="loaderStatus">// initialising</p>
+  <div class="loader__core">
+    <svg class="loader__globe" viewBox="0 0 140 140" aria-hidden="true">
+      <circle class="lg-track" cx="70" cy="70" r="54"/>
+      <circle class="lg-ring" id="loaderRing" cx="70" cy="70" r="54" transform="rotate(-90 70 70)"/>
+      <circle class="lg-body" cx="70" cy="70" r="30"/>
+      <ellipse class="lg-orbit lg-o1" cx="70" cy="70" rx="46" ry="14"/>
+      <ellipse class="lg-orbit lg-o2" cx="70" cy="70" rx="46" ry="14"/>
+      <g class="lg-spin"><circle class="lg-dot" cx="116" cy="70" r="3"/></g>
+    </svg>
+    <p class="loader__count"><span id="loaderNum">000</span><i>%</i></p>
+    <p class="loader__name">Sol Arden</p>
+  </div>
+</div>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="hud" id="hud" aria-hidden="true"></div>
+<div class="tracker" id="cursor" aria-hidden="true">
+  <div class="tr__body">
+    <svg viewBox="0 0 100 100"><circle class="tr__fill" cx="50" cy="50" r="44"/><circle class="r1" cx="50" cy="50" r="44"/><circle class="r2" cx="50" cy="50" r="33"/><path class="tick" d="M50 0v14M50 86v14M0 50h14M86 50h14"/></svg>
+    <span id="cursorLabel"></span>
+  </div>
+  <i class="tr__dot" id="trDot"></i>
+</div>
+
+<header class="nav">
+  <a href="#top" class="nav__logo" data-cursor="hover" aria-label="Sol Arden, home">Sol<b>.</b>A</a>
+  <div class="nav__links">
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" data-cursor="hover">
+      <span class="menu-btn__label">Menu</span><span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Sections" hidden>
+  <p class="menu__head">// navigate</p>
+  <ul id="menuList">
+    <li style="--n:0"><a href="#top" data-menu="top" data-cursor="hover"><span class="mi">00</span><span class="ml">Home</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:1"><a href="#about" data-menu="about" data-cursor="hover"><span class="mi">01</span><span class="ml">About</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:2"><a href="#work" data-menu="work" data-cursor="hover"><span class="mi">02</span><span class="ml">Work</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:3"><a href="#expertise" data-menu="expertise" data-cursor="hover"><span class="mi">03</span><span class="ml">Expertise</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:4"><a href="#experience" data-menu="experience" data-cursor="hover"><span class="mi">04</span><span class="ml">Experience</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:5"><a href="#toolkit" data-menu="toolkit" data-cursor="hover"><span class="mi">05</span><span class="ml">Toolkit</span><span class="ma" aria-hidden="true">→</span></a></li>
+    <li style="--n:6"><a href="#contact" data-menu="contact" data-cursor="hover"><span class="mi">06</span><span class="ml">Contact</span><span class="ma" aria-hidden="true">→</span></a></li>
+  </ul>
+  <a href="#contact" class="menu__cta" data-menu-cta data-cursor="hover"><span>Let’s talk</span><span aria-hidden="true">→</span></a>
+  <p class="menu__foot"><span id="menuCur">Home</span><span>Esc to close</span></p>
+</nav>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" data-theme="0">
+    <p class="eyebrow eyebrow--plain reveal">// Sol Arden is</p>
+    <h1 class="hero__title" id="heroTitle" aria-label="designer cartographer engineer">
+      <span class="line"><em class="g1">designer</em></span>
+      <span class="line"><em class="g2">cartographer</em></span>
+      <span class="line"><em class="g3">engineer</em></span>
+    </h1>
+    <div class="hero__foot reveal">
+      <div class="hero__intro">
+        <p class="hero__role">Design engineer building maps and data stories for the web.</p>
+        <p data-split>Hong Kong from Phoenix</p>
+        <div class="hero__cta">
+          <a class="pill pill--solid" href="#work" data-cursor="hover">See the work <span aria-hidden="true">→</span></a>
+          <a class="pill" href="#contact" data-cursor="hover">Get in touch</a>
+        </div>
+      </div>
+      <div class="scroll"><span></span>Scroll to explore</div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about" data-theme="1">
+    <h2 class="sr-only">About</h2>
+    <p class="eyebrow reveal">01 / about</p>
+    <div class="term reveal" role="group" aria-label="About, shown as a terminal window">
+      <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__title">sol@hongkong: ~/about</span><span class="term__tag" aria-hidden="true">zsh</span></div>
+      <div class="term__body">
+        <p class="term__cmd" aria-hidden="true"><b>$</b> <span class="tw">cat about.txt</span></p>
+        <p class="about__text split-words">
+      I’m a designer‑engineer obsessed with the space where code meets craft. I turn bold ideas into playful, high‑performance websites that people actually want to explore — one shader, one easing curve, one pixel at a time.
+    </p>
+        <p class="term__cmd term__end" aria-hidden="true"><b>$</b> <span class="term__caret"></span></p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="reveal"><strong data-count="9">0</strong><span>Years on the web</span></div>
+      <div class="reveal"><strong data-count="31">0</strong><span>Projects shipped</span></div>
+      <div class="reveal"><strong data-count="4">0</strong><span>Open-source libraries</span></div>
+      <div class="reveal"><strong data-count="2">0</strong><span>Cities called home</span></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <section class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Design engineering</span><span>✦</span><span>WebGL</span><span>✦</span><span>TypeScript</span><span>✦</span><span>Data visualisation</span><span>✦</span><span>Motion</span><span>✦</span><span>Accessibility</span><span>✦</span><span>Cartography</span><span>✦</span><span>Creative code</span><span>✦</span>
+      <span>Design engineering</span><span>✦</span><span>WebGL</span><span>✦</span><span>TypeScript</span><span>✦</span><span>Data visualisation</span><span>✦</span><span>Motion</span><span>✦</span><span>Accessibility</span><span>✦</span><span>Cartography</span><span>✦</span><span>Creative code</span><span>✦</span>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="work" id="work" data-theme="2">
+    <div class="work__head">
+      <p class="eyebrow reveal">02 / selected work</p>
+      <h2 class="reveal">Recent<br>projects</h2>
+    </div>
+    <ul class="work__list" id="workList">
+      <li><a href="https://example.com/tidelines" data-desc="A live map of Victoria Harbour: tides, ferry routes and vessel positions drawn as moving points, readable on a phone at the pier." target="_blank" rel="noopener" data-g="g6" data-cursor="view"><span class="num">01</span><span class="name">tidelines</span><span class="tag">Tide and ferry map · WebGL, TypeScript</span><span class="desc">A live map of Victoria Harbour: tides, ferry routes and vessel positions drawn as moving points, readable on a phone at the pier.</span><span class="year">2026</span></a></li>
+      <li><a href="https://example.com/dustlight" data-desc="An atlas of desert air: ten years of dust and ozone readings across Arizona, with a timeline to scrub and stations to compare." target="_blank" rel="noopener" data-g="g1" data-cursor="view"><span class="num">02</span><span class="name">dustlight</span><span class="tag">Air-quality atlas · D3, Canvas</span><span class="desc">An atlas of desert air: ten years of dust and ozone readings across Arizona, with a timeline to scrub and stations to compare.</span><span class="year">2025</span></a></li>
+      <li><a href="https://example.com/legend" data-desc="A design system for mapping tools: tokens, forty components and motion rules, documented with live examples and accessibility notes." target="_blank" rel="noopener" data-g="g2" data-cursor="view"><span class="num">03</span><span class="name">legend</span><span class="tag">Design system · React, design tokens</span><span class="desc">A design system for mapping tools: tokens, forty components and motion rules, documented with live examples and accessibility notes.</span><span class="year">2025</span></a></li>
+      <li><a href="https://example.com/nightshift" data-desc="A scrolling story about a city after dark, told with transit, energy and noise data. Every chart has a text alternative." target="_blank" rel="noopener" data-g="g3" data-cursor="view"><span class="num">04</span><span class="name">nightshift</span><span class="tag">Data story · scrollytelling</span><span class="desc">A scrolling story about a city after dark, told with transit, energy and noise data. Every chart has a text alternative.</span><span class="year">2024</span></a></li>
+      <li><a href="https://example.com/contour" data-desc="A small library that turns elevation data into contour lines in the browser. No dependencies, 6 kB." target="_blank" rel="noopener" data-g="g4" data-cursor="view"><span class="num">05</span><span class="name">contour</span><span class="tag">Open-source library · TypeScript</span><span class="desc">A small library that turns elevation data into contour lines in the browser. No dependencies, 6 kB.</span><span class="year">2024</span></a></li>
+      <li><a href="https://example.com/waypoint" data-desc="A trail planner that works without signal: routes, water sources and elevation profiles stored on the device." target="_blank" rel="noopener" data-g="g5" data-cursor="view"><span class="num">06</span><span class="name">waypoint</span><span class="tag">Trail planner · offline-first PWA</span><span class="desc">A trail planner that works without signal: routes, water sources and elevation profiles stored on the device.</span><span class="year">2023</span></a></li>
+    </ul>
+    <div class="work__preview" id="preview"></div>
+  </section>
+
+  <!-- EXPERTISE -->
+  <section class="expertise" id="expertise" data-theme="3">
+    <p class="eyebrow reveal">03 / capabilities</p>
+    <h2 class="x-title reveal" data-split>Expertise</h2>
+    <div class="acc" id="acc">
+    <article class="acc__row">
+      <button class="acc__head" type="button" aria-expanded="false" data-cursor="hover"><span class="acc__idx">01</span><span class="acc__name">Design engineering</span><span class="acc__plus" aria-hidden="true"></span></button>
+      <div class="acc__body"><ul><li>React &amp; TypeScript</li><li>Design systems &amp; tokens</li><li>Motion &amp; interaction</li><li>Accessibility</li></ul></div>
+    </article>
+    <article class="acc__row">
+      <button class="acc__head" type="button" aria-expanded="false" data-cursor="hover"><span class="acc__idx">02</span><span class="acc__name">Data visualisation</span><span class="acc__plus" aria-hidden="true"></span></button>
+      <div class="acc__body"><ul><li>Charts that explain</li><li>Maps &amp; geodata</li><li>Large datasets</li><li>Scrollytelling</li></ul></div>
+    </article>
+    <article class="acc__row">
+      <button class="acc__head" type="button" aria-expanded="false" data-cursor="hover"><span class="acc__idx">03</span><span class="acc__name">Creative code</span><span class="acc__plus" aria-hidden="true"></span></button>
+      <div class="acc__body"><ul><li>WebGL &amp; Three.js</li><li>Shaders</li><li>Generative art</li><li>Procedural animation</li></ul></div>
+    </article>
+    <article class="acc__row">
+      <button class="acc__head" type="button" aria-expanded="false" data-cursor="hover"><span class="acc__idx">04</span><span class="acc__name">Prototyping</span><span class="acc__plus" aria-hidden="true"></span></button>
+      <div class="acc__body"><ul><li>Figma to code</li><li>Interaction studies</li><li>User testing</li><li>Design reviews</li></ul></div>
+    </article>
+    <article class="acc__row">
+      <button class="acc__head" type="button" aria-expanded="false" data-cursor="hover"><span class="acc__idx">05</span><span class="acc__name">Tooling</span><span class="acc__plus" aria-hidden="true"></span></button>
+      <div class="acc__body"><ul><li>Node &amp; Python</li><li>Build pipelines</li><li>Testing</li><li>AI tools</li></ul></div>
+    </article>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="xp" id="experience" data-theme="6">
+    <div class="xp__side">
+      <p class="eyebrow reveal">04 / experience</p>
+      <h2 class="reveal">Where I’ve<br>delivered</h2>
+      <p class="xp__lead reveal">From a studio in Phoenix to a harbour-side desk in Hong Kong: interfaces that make data easy to read.</p>
+    </div>
+    <div class="xp__line" id="xpLine">
+      <article class="xp__item reveal"><span class="xp__dot" aria-hidden="true"></span><p class="xp__tag">Work · 01</p><h3>Arden Studio</h3><p class="xp__sub">Independent · 2023 → now</p><ul><li>Design and build interactive maps and data stories for newsrooms, transit agencies and research groups.</li><li>Maintain contour and legend, two open-source libraries used in production.</li></ul></article>
+      <article class="xp__item reveal"><span class="xp__dot" aria-hidden="true"></span><p class="xp__tag">Work · 02</p><h3>Tidewater Maps</h3><p class="xp__sub">Senior design engineer · Hong Kong</p><ul><li>Led the front end of a live harbour map used by ferry operators and commuters.</li><li>Built the design system shared by four product teams, and cut the main bundle by 40%.</li><li>Set up accessibility reviews: every release is tested with a keyboard and a screen reader.</li></ul></article>
+      <article class="xp__item reveal"><span class="xp__dot" aria-hidden="true"></span><p class="xp__tag">Work · 03</p><h3>Saguaro Labs</h3><p class="xp__sub">Front-end developer · Phoenix</p><ul><li>Built dashboards of air-quality and water data for city agencies.</li><li>Moved the charts from images to Canvas and WebGL, so large datasets stay smooth.</li></ul></article>
+      <article class="xp__item reveal"><span class="xp__dot" aria-hidden="true"></span><p class="xp__tag">Education</p><h3>Sonoran Institute of Design</h3><p class="xp__sub">2012 → 2016</p><ul><li>B.F.A. in Interaction Design, with a minor in Geography.</li></ul></article>
+      <article class="xp__item reveal"><span class="xp__dot" aria-hidden="true"></span><p class="xp__tag">Next</p><h3>Open to what’s next</h3><p class="xp__sub">Hong Kong · from Phoenix</p><ul><li>Design engineering on maps, data and creative tools.</li><li>Small teams that care how things feel as well as how they work.</li></ul></article>
+    </div>
+  </section>
+
+  <!-- TOOLKIT -->
+  <section class="toolkit" id="toolkit" data-theme="5">
+    <p class="eyebrow reveal">05 / toolkit</p>
+    <div class="tk__head reveal"><h2>Tools I<br>build with</h2><p>What I design and build with, and how I keep projects moving.</p></div>
+    <div class="tk__grid">
+      <article class="tk reveal"><span class="tk__n">01</span><h3>Design &amp; build</h3><p>Interfaces built in React and TypeScript, with motion and accessibility handled properly.</p><ul><li>TypeScript</li><li>React</li><li>Next.js</li><li>Tailwind</li><li>Motion</li><li>Three.js</li><li>Figma</li></ul></article>
+      <article class="tk reveal"><span class="tk__n">02</span><h3>Maps &amp; data</h3><p>Turning large, messy datasets into maps and charts people can read.</p><ul><li>D3</li><li>MapLibre</li><li>Observable Plot</li><li>Python</li><li>SQL</li></ul></article>
+      <article class="tk reveal"><span class="tk__n">03</span><h3>Delivery</h3><p>Work kept visible and shipped in small steps, so nobody is surprised at the end.</p><ul><li>GitHub</li><li>Linear</li><li>Playwright</li><li>Vitest</li><li>Storybook</li></ul></article>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <footer class="contact" id="contact" data-theme="4">
+    <p class="eyebrow reveal">06 / contact</p>
+    <h2 class="contact__title reveal">Let’s plan<br>something <em>that<br>ships.</em></h2>
+    <form class="cform reveal" id="contactForm" novalidate aria-label="Contact form">
+      <p class="cform__title" aria-hidden="true"><b>$</b> send_message <span>// I reply within a few days</span></p>
+      <div class="cform__row">
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" aria-describedby="cf-name-err">
+          <span class="field__err" id="cf-name-err" data-error-for="name"></span>
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="254" aria-describedby="cf-email-hint cf-email-err">
+          <span class="field__hint" id="cf-email-hint">So I can reply. Never shared.</span>
+          <span class="field__err" id="cf-email-err" data-error-for="email"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" rows="5" required maxlength="5000" aria-describedby="cf-message-err"></textarea>
+        <span class="field__err" id="cf-message-err" data-error-for="message"></span>
+      </div>
+      <div class="cform__hp" aria-hidden="true">
+        <label for="cf-website">Leave this empty</label>
+        <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="cform__foot">
+        <button class="cform__send" type="submit" data-cursor="hover"><span>Send message</span><span aria-hidden="true">→</span></button>
+        <p class="cform__status" id="cformStatus" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+    <div class="contact__row">
+      <div class="socials">
+        <a href="https://example.com/github" target="_blank" rel="noopener" data-cursor="hover">GitHub</a>
+        <a href="https://example.com/linkedin" target="_blank" rel="noopener" data-cursor="hover">LinkedIn</a>
+      </div>
+      <p>© 2026 Sol Arden <span class="contact__note">· a fictional person, for a portfolio example</span></p>
+    </div>
+  </footer>
+</main>
+
+<script type="module" src="/main.js"></script>
+<script type="module" src="/contact.js"></script>
+</body>
+</html>

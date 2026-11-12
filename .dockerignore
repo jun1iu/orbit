@@ -1,0 +1,15 @@
+**
+!Caddyfile
+!index.html
+!404.html
+!style.css
+!main.js
+!contact.js
+!robots.txt
+!og-image.png
+!vendor/
+!vendor/**
+!scripts/
+!scripts/**
+!locales/
+!locales/**

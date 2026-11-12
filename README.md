@@ -64,3 +64,9 @@ not send.
   shows. With JavaScript off, it shows straight away.
 - Motion respects `prefers-reduced-motion`.
 - Phones and slow machines get fewer points and a lower resolution.
+
+## Licence
+
+[MIT](LICENSE): free to use, change and share, including commercially, as long as the licence
+notice stays with it. Three.js (in `vendor/`) is also MIT; the coastline data comes from Natural
+Earth, which is public domain.

@@ -1,95 +1,66 @@
 # orbit
 
-A portfolio site example: a dark single page with a WebGL scene (Three.js), a custom cursor,
-rolling counters, an expertise accordion, an experience timeline and a contact form.
+A portfolio site example: one dark page whose WebGL point cloud (Three.js) reshapes itself as you
+scroll. Live at <https://orbit.jun-liu.net>.
 
-The person on the page, **Sol Arden**, is fictional: a design engineer from Phoenix who works in
-Hong Kong and builds maps and data stories. The projects, employers and school are made up, the
-links point at `example.com`. The example is live at <https://orbit.jun-liu.net>. See
-[Make it yours](#make-it-yours) for what to change.
+The person on the page, **Sol Arden**, is fictional, and so are the projects, employers and
+school. Links point at `example.com`.
 
-The scene is one cloud of points. In the hero and the contact section it is the Earth, drawn dot by
-dot from real coastlines, with an arc from Phoenix to Hong Kong. In the About section the points
-land as Victoria Harbour at night, seen from Tsim Sha Tsui: the Central and Wan Chai skyline, the
-Peak behind it, reflections on the water, a Star Ferry and a red-sailed junk. Behind the project
-list they become the Sonoran desert at sunset (saguaros, buttes, a road running to a striped sun,
-a hot-air balloon). Behind Expertise they are the New York skyline (the Brooklyn Bridge, One World
-Trade, the Empire State and Chrysler buildings, the Statue of Liberty), and behind Experience,
-Paris (the Eiffel Tower, the Louvre pyramid, the Arc de Triomphe, Notre-Dame, Sacré-Cœur).
-Elsewhere the same points scatter into a star field that streams past as you scroll. A slow nebula
-in the section's colours sits behind it all.
+## The scene
 
-## Make it yours
+One cloud of points forms a different picture behind each section:
 
-- **Words:** everything visible is in `index.html`: the name, the three hero words, the About
-  paragraph, the stats, six projects, the expertise rows, the timeline, the toolkit and the footer
-  links. The logo (`Sol.A`) appears in the loader and the header.
-- **Address:** replace `orbit.jun-liu.net` in `index.html` (canonical and Open Graph links), `robots.txt` and the `SITE` constant in `scripts/build.mjs`.
-- **Places:** the hero's arc and beacons run from Phoenix to Hong Kong (`PHX`, `HKG` and `CITIES`
-  in `main.js`). The four drawn scenes are places along the way; point each section at another
-  scene, or at plain stars, in `THEMES`.
-- **Preview image:** `og-image.png` (1200 x 630) carries the name, so replace it.
-- **Contact form:** it posts JSON to `/api/contact`. Point the `Caddyfile`'s `reverse_proxy` at
-  your own service, or swap the form for a `mailto:` link.
+| Section | Picture |
+| --- | --- |
+| Hero, Contact | The Earth, drawn from real coastlines, with an arc from Phoenix to Hong Kong |
+| About | Victoria Harbour at night |
+| Work | The Sonoran desert at sunset |
+| Expertise | The New York skyline |
+| Experience | Paris |
+| Toolkit | A star field |
 
 ## Run locally
 
-The site is static. The build copies it into `dist/` and writes the sitemap:
-
-    node scripts/build.mjs                  # writes dist/
+    node scripts/build.mjs                  # writes dist/ and the sitemap
     python3 -m http.server -d dist 8000     # then visit http://localhost:8000
 
-The contact form posts to `/api/contact`, which only exists when deployed (see below). Locally
-the form shows a "couldn't reach the server" message.
+No dependencies to install. The contact form needs a server, so locally it reports that it could
+not send.
 
-## Languages
+## Make it yours
 
-The site is English only for now. The build can still generate translated pages: put a
-`locales/<language>.json` file back (a list of `[English, translated]` pairs, with
-`"published": true`), add a language switch (`<nav class="lang">`) and `hreflang` links to
-`index.html`, and the build writes one page per language and fails if a translation goes stale.
+- **Words:** everything visible is in `index.html`. The logo (`Sol.A`) appears in the loader and
+  the header.
+- **Address:** replace `orbit.jun-liu.net` in `index.html`, `robots.txt` and the `SITE` constant
+  in `scripts/build.mjs`.
+- **Preview image:** `og-image.png` (1200 x 630) carries the name, so replace it.
+- **Scenes:** the `THEMES` array at the top of `main.js` sets each section's colours and picture.
+  The pictures are drawn by `harbour()`, `desert()`, `newYork()` and `paris()`; each landmark is a
+  line or two, so they are easy to change. The arc's two cities are `PHX` and `HKG`.
+- **Contact form:** it posts JSON to `/api/contact` and expects `{ ok: true }` back, or `422`
+  with `{ errors: { field: message } }`. Point it at your own service, or swap the form for a
+  `mailto:` link.
+- **Languages:** English only for now. Add a `locales/<language>.json` file of
+  `[English, translated]` pairs with `"published": true`, and the build writes a page for it.
 
 ## Files
 
-- `index.html`, `style.css`, `main.js`: the site. Section colours, globe positions and what the
-  point cloud forms in each section (`g` Earth, `h` Victoria Harbour, `d` the Arizona desert, `n`
-  New York, `p` Paris, none = stars) are in the `THEMES` array at the top of `main.js`. The harbour is drawn by the `harbour()`
-  function: each landmark is one `tower(...)` line, so buildings are easy to add or move. The
-  other scenes are drawn by `desert()`, `newYork()` and `paris()`. All four use the helpers in
-  `sketch()` (`line`, `tower`, `water`, `ridge`, `saguaro`, `floor`). The land mask for the Earth is embedded in `main.js`
-  (`LAND`: 480 x 240 cells, one bit each, made from Natural Earth's public-domain coastlines).
-- `contact.js`: the contact form. It is kept separate from `main.js`, so the form still works
-  if WebGL or the globe fails.
-- `vendor/three.module.min.js`: Three.js r160 (minified, MIT licence), loaded through an import map
-- `404.html`, `robots.txt`, `og-image.png`: the not-found page, crawler file and the social preview
-  image (`sitemap.xml` is generated by the build)
-- `scripts/build.mjs`: the build that writes `dist/` and the sitemap
-- `Caddyfile`, `Dockerfile`: the production server
-
-## Resilience
-
-- An inline script in `<head>` marks JavaScript as running. If `main.js` never finishes (it's
-  blocked, the visitor is offline, or the browser is old), the loader steps aside after 8 seconds
-  and the content shows. With JavaScript off, the content shows straight away.
-- The loader's progress is time-based, so slow devices don't wait longer than fast ones.
-- Motion respects `prefers-reduced-motion`.
-- Phones and small machines get fewer points, and if the frame rate stays low the scene renders
-  at a lower resolution.
+- `index.html`, `style.css`, `main.js`: the site
+- `contact.js`: the contact form, kept separate so it works even if WebGL fails
+- `vendor/three.module.min.js`: Three.js r160 (MIT licence)
+- `scripts/build.mjs`: the build
+- `vercel.json`, or `Dockerfile` with `Caddyfile`: two ways to deploy
 
 ## Deploying
 
-### Vercel
+- **Vercel:** import the repo. `vercel.json` runs the build and serves `dist/`. There is no
+  contact API there until you add one.
+- **Docker:** the `Dockerfile` builds the site into a Caddy image that serves it on port 8080 and
+  forwards `/api/contact` to `contact-api:3001` (a placeholder for your own service).
 
-`vercel.json` tells Vercel to run the build and serve `dist/`, with the same security headers as
-the Caddy setup. There is no contact API on Vercel, so the form reports that it could not send
-until you add one (a function at `/api/contact`, or a rewrite to your own service).
+## Built to hold up
 
-### Docker and Caddy
-
-The `Dockerfile` runs the build in a Node stage, then copies `dist/` into a Caddy image that serves
-the site on port 8080. At build time it adds a content hash to the URLs of `style.css`, `main.js`, `contact.js` and Three.js, so a CDN can cache
-them for a year and never serve a stale copy. The `Caddyfile` also:
-
-- forwards `POST /api/contact` to the service that keeps the message inbox (`contact-api:3001`, a
-  placeholder: the form expects `{ ok: true }` back, or `422` with `{ errors: { field: message } }`)
-- serves `404.html` for unknown paths
+- If the script fails or is blocked, the loader steps aside after 8 seconds and the content
+  shows. With JavaScript off, it shows straight away.
+- Motion respects `prefers-reduced-motion`.
+- Phones and slow machines get fewer points and a lower resolution.

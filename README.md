@@ -49,14 +49,14 @@ not send.
 - `contact.js`: the contact form, kept separate so it works even if WebGL fails
 - `vendor/three.module.min.js`: Three.js r160 (MIT licence)
 - `scripts/build.mjs`: the build
-- `vercel.json`, or `Dockerfile` with `Caddyfile`: two ways to deploy
+- `Dockerfile` with `Caddyfile`: the deploy
 
 ## Deploying
 
-- **Vercel:** import the repo. `vercel.json` runs the build and serves `dist/`. There is no
-  contact API there until you add one.
-- **Docker:** the `Dockerfile` builds the site into a Caddy image that serves it on port 8080 and
-  forwards `/api/contact` to `contact-api:3001` (a placeholder for your own service).
+Live at **https://orbit.jun-liu.net**, on the home server: it checks the `development` branch every
+minute and rebuilds on a new commit. The `Dockerfile` builds the site into a Caddy image that serves it
+on port 8080 and forwards `/api/contact` to `contact-api:3001` (a placeholder for your own service; there
+is none on the home server yet, so the form shows its error message).
 
 ## Built to hold up
 

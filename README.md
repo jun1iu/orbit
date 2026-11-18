@@ -61,6 +61,8 @@ That is expected.
 
 ## Make it yours
 
+- **Credit link:** delete the `.credit` link at the end of `index.html` and its rule in
+  `style.css`.
 - **Words:** everything visible is in `index.html`. The logo (`Sol.A`) appears in the loader and
   the header.
 - **Web address:** replace `orbit.jun-liu.net` in `index.html`, `robots.txt` and the `SITE`

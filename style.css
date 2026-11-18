@@ -624,3 +624,7 @@ html:lang(zh) .about__text,html:lang(zh) .term .about__text{line-height:1.6}
 .xp__dot{z-index:1}
 .xp__item.passed .xp__dot{background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent),0 0 20px var(--accent)}
 html:not(.js) .xp__line::after{transform:none}
+
+/* Template credit (remove when you make the page yours) */
+.credit{position:fixed;left:var(--pad);bottom:16px;z-index:60;padding:8px 14px;border-radius:999px;font-size:12px;letter-spacing:.02em;background:color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);text-decoration:none}
+.credit:hover,.credit:focus-visible{background:var(--ink);color:var(--bg)}
